@@ -8,8 +8,8 @@ import { JwtService } from '@nestjs/jwt';
 
 import { UsersService } from '../users/users.service';
 import { bcryptConstants } from './constants';
-import { LoginUserDto } from './logim.dto';
-import { SignupUserDto } from './signup.dto';
+import { LoginUser } from './dto/login.input';
+import { SignupUser } from './dto/signup.input';
 
 @Injectable()
 export class AuthService {
@@ -18,7 +18,7 @@ export class AuthService {
     private jwtService: JwtService,
   ) {}
 
-  async signIn({ email, password }: LoginUserDto) {
+  async signIn({ email, password }: LoginUser) {
     const user = await this.usersService.user({ email });
     if (user == null || compareSync(password, user.hasedPassword)) {
       throw new UnauthorizedException();
@@ -36,7 +36,7 @@ export class AuthService {
     };
   }
 
-  async signup({ email, password, firstName, lastName }: SignupUserDto) {
+  async signup({ email, password, firstName, lastName }: SignupUser) {
     const user = await this.usersService.user({ email });
     if (user) {
       throw new NotAcceptableException();
