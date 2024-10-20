@@ -28,10 +28,4 @@ export class AuthController {
   signup(@Body() signupDto: SignupUser) {
     return this.authService.signup(signupDto);
   }
-
-  @UseGuards(AuthGuard)
-  @Get('profile')
-  getProfile(@Request() req) {
-    return req.user;
-  }
 }

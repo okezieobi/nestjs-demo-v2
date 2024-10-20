@@ -7,11 +7,22 @@ export class RoleService {
   constructor(private prisma: PrismaService) {}
 
   async assignRole(parms: {
-    where: Prisma.RoleWhereUniqueInput;
-    create: Prisma.XOR<Prisma.RoleCreateInput, Prisma.RoleUncheckedCreateInput>;
-    update: Prisma.XOR<Prisma.RoleUpdateInput, Prisma.RoleUncheckedUpdateInput>;
+    userId: string;
+    name: string;
+    permissions: string[];
   }) {
-    const { where, update, create } = parms;
-    return this.prisma.role.upsert({ where, create, update });
+    const { userId, name, permissions } = parms;
+    const exists = await this.prisma.role.findUnique({
+      where: { name, id: userId },
+    });
+    if (exists) {
+      return this.prisma.role.update({
+        where: { id: exists.id, users: { every: { id: userId } } },
+        data: { permissions },
+      });
+    }
+    return this.prisma.role.create({
+      data: { name, permissions, users: { connect: { id: userId } } },
+    });
   }
 }
