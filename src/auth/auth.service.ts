@@ -36,7 +36,7 @@ export class AuthService {
     };
   }
 
-  async signup({ email, password, firstName, lastName}: SignupUserDto) {
+  async signup({ email, password, firstName, lastName }: SignupUserDto) {
     const user = await this.usersService.user({ email });
     if (user) {
       throw new NotAcceptableException();
