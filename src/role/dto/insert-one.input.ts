@@ -3,11 +3,11 @@ import { IsIn, ArrayUnique } from 'class-validator';
 
 export class WriteRole {
   @ApiProperty()
-  @IsIn(['Admin', 'User'])
+  @IsIn(['admin', 'user'])
   name: string;
 
   @ApiProperty()
-  @IsIn(['READ', 'INSERT', 'UPDATE', 'DELETE'], { each: true })
+  @IsIn(['read', 'insert', 'update', 'delete'], { each: true })
   @ArrayUnique()
   permissions: string[];
 }
