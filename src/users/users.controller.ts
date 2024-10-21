@@ -17,8 +17,8 @@ import { AuthGuard } from '../auth/auth.guard';
 import { User } from '@prisma/client';
 import { Roles } from '../role/role.decorator';
 import { Role } from '../role/role.enum';
+import { RolesGuard } from 'src/role/role.guard';
 
-@UseGuards(AuthGuard)
 @Controller('users')
 export class UsersController {
   constructor(
@@ -26,15 +26,17 @@ export class UsersController {
     private roleService: RoleService,
   ) {}
 
+  @UseGuards(AuthGuard)
   @HttpCode(HttpStatus.OK)
   @Get('/')
   listUsers() {
-    return this.userService.users({ include: { roles: true } });
+    return this.userService.users({});
   }
 
+  @UseGuards(AuthGuard)
   @HttpCode(HttpStatus.OK)
   @Post('/assign-role')
-  assignRole(@Body() roleData: WriteRole, @Request() req) {
+  assignRole(@Body() roleData: WriteRole, @Request() req: any) {
     const user: User = req['user'];
     return this.roleService.assignRole({
       userId: user.id,
@@ -43,6 +45,7 @@ export class UsersController {
     });
   }
 
+  @UseGuards(AuthGuard, RolesGuard)
   @Roles(Role.AdminCanDelete)
   @HttpCode(HttpStatus.OK)
   @Delete('/:id')

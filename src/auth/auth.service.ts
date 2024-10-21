@@ -20,19 +20,24 @@ export class AuthService {
 
   async signIn({ email, password }: LoginUser) {
     const user = await this.usersService.user({ email }, { roles: true });
-    if (user == null || compareSync(password, user.hasedPassword)) {
+    if (user == null || compareSync(password, user.hasedPassword) == false) {
       throw new UnauthorizedException();
     }
+    const roles = [];
+    user.roles.forEach((role) => {
+      role.permissions.forEach((permission) => {
+        roles.push(`${role.name}:${permission}`);
+      });
+    });
     const payload = {
       id: user.id,
-      roles: user.roles.map((role) =>
-        role.permissions.map((permission) => `${role.name}:${permission}`),
-      ),
+      roles,
     };
     return {
       access_token: await this.jwtService.signAsync(payload),
       user: {
-        ...payload,
+        id: user.id,
+        roles: user.roles,
         email: user.email,
         firstName: user.firstName,
         lastName: user.lastName,
@@ -42,11 +47,11 @@ export class AuthService {
   }
 
   async signup({ email, password, firstName, lastName }: SignupUser) {
-    const user = await this.usersService.user({ email });
-    if (user) {
+    const exists = await this.usersService.user({ email }, { roles: true });
+    if (exists) {
       throw new NotAcceptableException();
     }
-    const newUser = await this.usersService.createUser({
+    const user = await this.usersService.createUser({
       email,
       firstName,
       lastName,
@@ -57,9 +62,7 @@ export class AuthService {
     });
     const payload = {
       id: user.id,
-      roles: user.roles.map((role) =>
-        role.permissions.map((permission) => `${role.name}:${permission}`),
-      ),
+      roles: [],
     };
     return {
       access_token: await this.jwtService.signAsync(payload),

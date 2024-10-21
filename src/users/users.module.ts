@@ -12,7 +12,7 @@ import { JwtService } from '@nestjs/jwt';
     RoleService,
     PrismaService,
     JwtService,
-    { useClass: RolesGuard, provide: 'APP_GUARD' },
+    //{ useClass: RolesGuard, provide: 'APP_GUARD' },
   ],
   exports: [UsersService],
   controllers: [UsersController],
