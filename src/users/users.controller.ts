@@ -11,12 +11,12 @@ import {
   Param,
 } from '@nestjs/common';
 import { UsersService } from './users.service';
-import { RoleService } from 'src/role/role.service';
-import { WriteRole } from 'src/role/dto/insert-one.input';
-import { AuthGuard } from 'src/auth/auth.guard';
+import { RoleService } from '../role/role.service';
+import { WriteRole } from '../role/dto/insert-one.input';
+import { AuthGuard } from '../auth/auth.guard';
 import { User } from '@prisma/client';
-import { Roles } from 'src/role/role.decorator';
-import { Role } from 'src/role/role.enum';
+import { Roles } from '../role/role.decorator';
+import { Role } from '../role/role.enum';
 
 @UseGuards(AuthGuard)
 @Controller('users')
