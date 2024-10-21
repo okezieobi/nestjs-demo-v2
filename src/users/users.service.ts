@@ -8,9 +8,11 @@ export class UsersService {
 
   async user(
     userWhereUniqueInput: Prisma.UserWhereUniqueInput,
-  ): Promise<User | null> {
+    include?: Prisma.UserInclude,
+  ) {
     return this.prisma.user.findUnique({
       where: userWhereUniqueInput,
+      include,
     });
   }
 

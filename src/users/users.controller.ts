@@ -15,6 +15,8 @@ import { RoleService } from 'src/role/role.service';
 import { WriteRole } from 'src/role/dto/insert-one.input';
 import { AuthGuard } from 'src/auth/auth.guard';
 import { User } from '@prisma/client';
+import { Roles } from 'src/role/role.decorator';
+import { Role } from 'src/role/role.enum';
 
 @UseGuards(AuthGuard)
 @Controller('users')
@@ -41,6 +43,7 @@ export class UsersController {
     });
   }
 
+  @Roles(Role.AdminCanDelete)
   @HttpCode(HttpStatus.OK)
   @Delete('/:id')
   deleteUser(@Param('id') id: string) {

@@ -19,20 +19,25 @@ export class AuthService {
   ) {}
 
   async signIn({ email, password }: LoginUser) {
-    const user = await this.usersService.user({ email });
+    const user = await this.usersService.user({ email }, { roles: true });
     if (user == null || compareSync(password, user.hasedPassword)) {
       throw new UnauthorizedException();
     }
     const payload = {
       id: user.id,
-      email: user.email,
-      firstName: user.firstName,
-      lastName: user.lastName,
-      createdAt: user.createdAt,
+      roles: user.roles.map((role) =>
+        role.permissions.map((permission) => `${role.name}:${permission}`),
+      ),
     };
     return {
       access_token: await this.jwtService.signAsync(payload),
-      user: payload,
+      user: {
+        ...payload,
+        email: user.email,
+        firstName: user.firstName,
+        lastName: user.lastName,
+        createdAt: user.createdAt,
+      },
     };
   }
 
@@ -51,15 +56,20 @@ export class AuthService {
       ),
     });
     const payload = {
-      id: newUser.id,
-      email: newUser.email,
-      firstName: newUser.firstName,
-      lastName: newUser.lastName,
-      createdAt: newUser.createdAt,
+      id: user.id,
+      roles: user.roles.map((role) =>
+        role.permissions.map((permission) => `${role.name}:${permission}`),
+      ),
     };
     return {
       access_token: await this.jwtService.signAsync(payload),
-      user: payload,
+      user: {
+        ...payload,
+        email: user.email,
+        firstName: user.firstName,
+        lastName: user.lastName,
+        createdAt: user.createdAt,
+      },
     };
   }
 }
