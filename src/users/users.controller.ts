@@ -5,6 +5,10 @@ import {
   Post,
   UseGuards,
   Request,
+  HttpCode,
+  HttpStatus,
+  Delete,
+  Param,
 } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { RoleService } from 'src/role/role.service';
@@ -20,11 +24,13 @@ export class UsersController {
     private roleService: RoleService,
   ) {}
 
+  @HttpCode(HttpStatus.OK)
   @Get('/')
   listUsers() {
     return this.userService.users({ include: { roles: true } });
   }
 
+  @HttpCode(HttpStatus.OK)
   @Post('/assign-role')
   assignRole(@Body() roleData: WriteRole, @Request() req) {
     const user: User = req['user'];
@@ -33,5 +39,11 @@ export class UsersController {
       name: roleData.name,
       permissions: roleData.permissions,
     });
+  }
+
+  @HttpCode(HttpStatus.OK)
+  @Delete('/:id')
+  deleteUser(@Param('id') id: string) {
+    return this.userService.deleteUser({ id });
   }
 }
